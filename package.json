@@ -1,0 +1,40 @@
+{
+  "name": "uml_editor",
+  "version": "0.1.0",
+  "bin": {
+    "uml_editor": "bin/uml_editor.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "lint": "eslint \"**/*.ts\" --ignore-pattern \"**/*.d.ts\"",
+    "lint:fix": "eslint \"**/*.ts\" --ignore-pattern \"**/*.d.ts\" --fix",
+    "lint:lambda": "cd lambda && eslint \"*.ts\" --ignore-pattern \"*.d.ts\""
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "aws-cdk": "2.1100.1",
+    "eslint": "^9.39.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.958.0",
+    "@aws-sdk/client-s3": "^3.958.0",
+    "@aws-sdk/lib-dynamodb": "^3.958.0",
+    "@aws-sdk/s3-request-presigner": "^3.958.0",
+    "@types/aws-lambda": "^8.10.159",
+    "@types/jsonwebtoken": "^9.0.10",
+    "aws-cdk-lib": "2.232.1",
+    "constructs": "^10.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "jwks-rsa": "^3.2.0"
+  }
+}

@@ -1,0 +1,406 @@
+title: UML Editor - Serverless Architecture {
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Client Layer
+client: Client Application {
+  shape: rectangle
+  style.fill: "#e3f2fd"
+  icon: https://icons.terrastruct.com/essentials/112-laptop.svg
+  
+  browser: React/TypeScript SPA {
+    shape: rectangle
+  }
+}
+
+# AWS Cloud
+aws: AWS Cloud {
+  style.fill: "#fff3e0"
+  style.stroke: "#ff9800"
+  style.stroke-width: 3
+  
+  # API Layer
+  apigw: API Gateway (HTTP API v2) {
+    shape: rectangle
+    style.fill: "#ff9800"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Networking-Content-Delivery/48/Arch_Amazon-API-Gateway_48.svg
+    
+    cors: CORS {
+      shape: circle
+      style.fill: "#ffb74d"
+    }
+    routes: Routes {
+      shape: rectangle
+      style.fill: "#ffb74d"
+      
+      post_diagrams: POST /diagrams
+      get_diagrams: GET /diagrams
+      get_diagram_id: "GET /diagrams/{id}"
+      delete_diagram: "DELETE /diagrams/{id}"
+    }
+  }
+  
+  # Authentication
+  cognito: AWS Cognito {
+    shape: rectangle
+    style.fill: "#e91e63"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Security-Identity-Compliance/48/Arch_AWS-Identity-Access-Management_48.svg
+    
+    user_pool: User Pool {
+      shape: cylinder
+      style.fill: "#f06292"
+    }
+    jwt: JWT Authorizer {
+      shape: hexagon
+      style.fill: "#f06292"
+    }
+    hosted_ui: Hosted UI {
+      shape: rectangle
+      style.fill: "#f06292"
+    }
+  }
+  
+  # VPC
+  vpc: VPC (Multi-AZ) {
+    style.fill: "#e8f5e9"
+    style.stroke: "#4caf50"
+    style.stroke-width: 2
+    
+    # Private Subnet
+    private: Private Subnet {
+      style.fill: "#c8e6c9"
+      style.stroke: "#66bb6a"
+      
+      # Lambda
+      lambda: Lambda Function {
+        shape: rectangle
+        style.fill: "#ff6f00"
+        style.font-color: "#ffffff"
+        icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Compute/48/Arch_AWS-Lambda_48.svg
+        
+        handler: API Handler {
+          shape: rectangle
+          style.fill: "#ff8f00"
+          
+          create: createDiagram()
+          list: listDiagrams()
+          get: getDiagram()
+          delete: deleteDiagram()
+          fetch_svg: fetchSvgFromS3()
+        }
+        
+        config: Config {
+          shape: rectangle
+          style.fill: "#ffa726"
+          
+          runtime: "Node.js 20.x"
+          memory: "1024 MB"
+          timeout: "30 seconds"
+        }
+      }
+      
+      # Internal ALB
+      alb: Application Load Balancer {
+        shape: rectangle
+        style.fill: "#673ab7"
+        style.font-color: "#ffffff"
+        icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Networking-Content-Delivery/48/Arch_Elastic-Load-Balancing_48.svg
+        
+        internal: Internal Only {
+          shape: circle
+          style.fill: "#9575cd"
+        }
+        health: "/health check" {
+          shape: circle
+          style.fill: "#9575cd"
+        }
+      }
+      
+      # ECS Cluster
+      ecs: ECS Fargate {
+        shape: rectangle
+        style.fill: "#ff5722"
+        style.font-color: "#ffffff"
+        icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Containers/48/Arch_Amazon-Elastic-Container-Service_48.svg
+        
+        cluster: D2 Renderer Cluster {
+          style.fill: "#ff7043"
+          
+          service: Fargate Service {
+            shape: rectangle
+            style.fill: "#ff8a65"
+            
+            auto_scale: "Auto Scale: 1-5 tasks" {
+              shape: hexagon
+              style.fill: "#ffab91"
+            }
+          }
+          
+          container: Container {
+            style.fill: "#ffccbc"
+            
+            d2_cli: D2 CLI {
+              shape: image
+              icon: https://icons.terrastruct.com/dev/terminal.svg
+            }
+            express: Express.js {
+              shape: rectangle
+            }
+            nodejs: Node.js 20 {
+              shape: rectangle
+            }
+          }
+        }
+      }
+      
+      # NAT Gateway
+      nat: NAT Gateway {
+        shape: rectangle
+        style.fill: "#795548"
+        style.font-color: "#ffffff"
+        icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Networking-Content-Delivery/48/Arch_AWS-PrivateLink_48.svg
+      }
+    }
+  }
+  
+  # DynamoDB
+  dynamodb: DynamoDB {
+    shape: cylinder
+    style.fill: "#2196f3"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Database/48/Arch_Amazon-DynamoDB_48.svg
+    
+    table: Diagrams Table {
+      shape: rectangle
+      style.fill: "#42a5f5"
+      
+      schema: "Schema" {
+        shape: rectangle
+        style.fill: "#64b5f6"
+        
+        pk: "PK: USER#{userId}"
+        sk: "SK: DIAGRAM#{timestamp}#{id}"
+      }
+    }
+    
+    features: Features {
+      shape: rectangle
+      style.fill: "#90caf9"
+      
+      billing: Pay-per-Request
+      encryption: AWS Managed
+      pitr: Point-in-Time Recovery
+    }
+  }
+  
+  # S3
+  s3: S3 Bucket {
+    shape: cylinder
+    style.fill: "#4caf50"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Storage/48/Arch_Amazon-Simple-Storage-Service_48.svg
+    
+    structure: "Structure" {
+      shape: rectangle
+      style.fill: "#66bb6a"
+      
+      path: "users/{userId}/{diagramId}.svg"
+    }
+    
+    features: Features {
+      shape: rectangle
+      style.fill: "#81c784"
+      
+      versioning: Enabled
+      encryption: SSE-S3
+      lifecycle: "30-day old version deletion"
+      signed_urls: "1-hour expiry"
+    }
+  }
+  
+  # ECR
+  ecr: ECR Repository {
+    shape: rectangle
+    style.fill: "#ff9800"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Containers/48/Arch_Amazon-Elastic-Container-Registry_48.svg
+    
+    image: d2-renderer:latest {
+      shape: image
+      icon: https://icons.terrastruct.com/dev/docker.svg
+    }
+  }
+  
+  # CloudWatch
+  cloudwatch: CloudWatch {
+    shape: rectangle
+    style.fill: "#9c27b0"
+    style.font-color: "#ffffff"
+    icon: https://icons.terrastruct.com/aws/Architecture-Service-Icons_07302021/Arch_Management-Governance/48/Arch_Amazon-CloudWatch_48.svg
+    
+    logs: Logs {
+      shape: page
+      style.fill: "#ab47bc"
+      
+      lambda_logs: Lambda Logs
+      ecs_logs: ECS Logs
+    }
+    
+    metrics: Metrics {
+      shape: rectangle
+      style.fill: "#ba68c8"
+      
+      performance: CPU, Memory, Duration
+      errors: "4xx, 5xx, Throttles"
+    }
+  }
+}
+
+# Internet
+internet: Internet {
+  shape: cloud
+  style.fill: "#bbdefb"
+  icon: https://icons.terrastruct.com/infra/019-network.svg
+}
+
+# Connections - Client to AWS
+client.browser -> aws.apigw.routes: HTTPS + JWT {
+  style.stroke: "#1976d2"
+  style.stroke-width: 3
+}
+
+# API Gateway to Cognito
+aws.apigw.cors -> aws.cognito.jwt: Validate JWT {
+  style.stroke: "#e91e63"
+  style.stroke-width: 2
+}
+
+# API Gateway to Lambda
+aws.apigw.routes -> aws.vpc.private.lambda.handler: Invoke {
+  style.stroke: "#ff6f00"
+  style.stroke-width: 3
+}
+
+# Cognito flows
+client.browser -> aws.cognito.hosted_ui: Login/Signup {
+  style.stroke: "#e91e63"
+  style.stroke-dash: 3
+}
+aws.cognito.user_pool -> aws.cognito.jwt: Issue Tokens {
+  style.stroke: "#f06292"
+}
+
+# Lambda to DynamoDB
+aws.vpc.private.lambda.handler -> aws.dynamodb.table: Query/Put/Delete {
+  style.stroke: "#2196f3"
+  style.stroke-width: 2
+  style.animated: true
+}
+
+# Lambda to S3
+aws.vpc.private.lambda.handler -> aws.s3: Get/Put Objects {
+  style.stroke: "#4caf50"
+  style.stroke-width: 2
+  style.animated: true
+}
+
+# Lambda to ALB
+aws.vpc.private.lambda.handler -> aws.vpc.private.alb: "HTTP POST /render" {
+  style.stroke: "#673ab7"
+  style.stroke-width: 2
+}
+
+# ALB to ECS
+aws.vpc.private.alb.internal -> aws.vpc.private.ecs.cluster.service: Route {
+  style.stroke: "#ff5722"
+  style.stroke-width: 2
+}
+
+# ECS to S3
+aws.vpc.private.ecs.cluster.container -> aws.s3: Upload SVG {
+  style.stroke: "#4caf50"
+  style.stroke-width: 2
+  style.animated: true
+}
+
+# ECS to ECR
+aws.ecr.image -> aws.vpc.private.ecs.cluster.container: Pull Image {
+  style.stroke: "#ff9800"
+  style.stroke-dash: 3
+}
+
+# NAT Gateway
+aws.vpc.private.nat -> internet: Outbound {
+  style.stroke: "#795548"
+  style.stroke-dash: 3
+}
+
+aws.vpc.private.lambda -> aws.vpc.private.nat: Internet Access {
+  style.stroke: "#795548"
+  style.stroke-dash: 3
+}
+
+aws.vpc.private.ecs -> aws.vpc.private.nat: Internet Access {
+  style.stroke: "#795548"
+  style.stroke-dash: 3
+}
+
+# CloudWatch Monitoring
+aws.vpc.private.lambda -> aws.cloudwatch.logs.lambda_logs: Stream {
+  style.stroke: "#9c27b0"
+  style.stroke-dash: 3
+}
+
+aws.vpc.private.ecs -> aws.cloudwatch.logs.ecs_logs: Stream {
+  style.stroke: "#9c27b0"
+  style.stroke-dash: 3
+}
+
+aws.apigw -> aws.cloudwatch.metrics: Metrics {
+  style.stroke: "#9c27b0"
+  style.stroke-dash: 3
+}
+
+# Data Flow Legend
+legend: Legend {
+  near: bottom-right
+  shape: rectangle
+  style.fill: "#f5f5f5"
+  style.stroke: "#9e9e9e"
+  
+  data_flow: "Solid = Data Flow" {
+    style.stroke: "#000000"
+    style.stroke-width: 2
+  }
+  
+  config_flow: "Dashed = Config/Monitoring" {
+    style.stroke: "#000000"
+    style.stroke-dash: 3
+  }
+  
+  animated: "Animated = High Traffic" {
+    style.stroke: "#000000"
+    style.animated: true
+  }
+}
+
+# Architecture Notes
+notes: Key Features {
+  near: bottom-left
+  shape: rectangle
+  style.fill: "#fff9c4"
+  style.stroke: "#fbc02d"
+  
+  serverless: "✓ Serverless (Lambda + Fargate)"
+  auto_scale: "✓ Auto-scaling at every layer"
+  secure: "✓ JWT Auth + VPC isolation"
+  iac: "✓ Infrastructure as Code (CDK)"
+  cost: "✓ Pay-per-use pricing"
+}

@@ -1,0 +1,16 @@
+*.js
+!jest.config.js
+*.d.ts
+node_modules
+
+# CDK asset staging directory
+.cdk.staging
+# Exclude all Markdown files
+*.md
+
+# Exclude all PowerShell scripts
+*.ps1
+cdk.out
+
+# Local configuration
+.cdk-config.json

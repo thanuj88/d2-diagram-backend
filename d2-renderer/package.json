@@ -1,0 +1,19 @@
+{
+  "name": "d2-renderer",
+  "version": "1.0.0",
+  "description": "D2 diagram rendering service",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@aws-sdk/client-s3": "^3.400.0",
+    "body-parser": "^1.20.2",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
